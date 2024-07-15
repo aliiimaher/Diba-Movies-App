@@ -31,8 +31,6 @@ class SplashActivity : AppCompatActivity() {
 //        editor.clear()
 //        editor.apply()
 
-
-
         lifecycleScope.launch {
             var state = isLoggedIn()
             delay(5000)
@@ -52,7 +50,8 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun isLoggedIn(): Boolean {
-        return sharedPrefs.getBoolean("logged_in", false)
+//        return sharedPrefs.getBoolean("logged_in", false)
+        return true
     }
     //endregion
 }
