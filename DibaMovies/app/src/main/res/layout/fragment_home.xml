@@ -4,16 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     android:orientation="vertical"
     android:paddingHorizontal="8dp"
-    tools:context=".presentation.ui.homescreen.HomeScreenActivity">
+    tools:context=".presentation.ui.homescreen.HomeFragment">
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPagerSlider"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_marginBottom="16dp"
-        />
+        android:layout_marginBottom="16dp" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
@@ -22,10 +22,10 @@
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="16dp"
         app:tabGravity="center"
-        app:tabIndicatorColor="@android:color/black"
+        app:tabIndicatorColor="@color/action"
         app:tabIndicatorHeight="4dp"
         app:tabSelectedTextColor="@android:color/black"
-        app:tabTextColor="@android:color/darker_gray" />
+        app:tabTextColor="@color/action" />
 
 
     <LinearLayout
@@ -80,12 +80,5 @@
 
         </LinearLayout>
     </LinearLayout>
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="?android:attr/windowBackground"
-        app:menu="@menu/bottom_nav_menu" />
 
 </LinearLayout>

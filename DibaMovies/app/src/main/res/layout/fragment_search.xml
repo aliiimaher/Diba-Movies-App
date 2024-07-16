@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:orientation="vertical"
+    android:padding="8dp"
+    tools:context=".presentation.ui.search.SearchFragment">
+
+    <com.google.android.material.circularreveal.cardview.CircularRevealCardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="20dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editableTextInputSearch"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:background="@color/primary"
+            android:hint="Enter movie name"
+            android:paddingHorizontal="12dp" />
+
+    </com.google.android.material.circularreveal.cardview.CircularRevealCardView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/searchedMoviesRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        tools:listitem="@layout/item_movie" />
+
+</LinearLayout>

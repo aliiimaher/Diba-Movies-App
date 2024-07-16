@@ -2,20 +2,19 @@ package com.example.dibamovies.presentation.ui.register
 
 import android.content.*
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import com.example.dibamovies.MainActivity
 import com.example.dibamovies.databinding.ActivityRegisterBinding
-import com.example.dibamovies.presentation.ui.homescreen.HomeScreenActivity
 import com.example.dibamovies.presentation.ui.register.validation.ValidationResult
 import com.example.dibamovies.shared_component.UiUtils
 import com.example.dibamovies.utils.NetworkChecker
+import com.example.dibamovies.utils.NetworkUtils
 import com.google.android.material.snackbar.Snackbar
 
 
 class Register : AppCompatActivity() {
-
-    //region properties
+    //region Properties
     private lateinit var binding: ActivityRegisterBinding
     private lateinit var viewModel: RegisterViewModel
     private lateinit var sharedPrefs: SharedPreferences
@@ -23,7 +22,7 @@ class Register : AppCompatActivity() {
     private var isNetworkConnected = false
     //endregion
 
-    //region lifecycle
+    //region Lifecycle
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         UiUtils.removeHeader(this)
@@ -31,10 +30,17 @@ class Register : AppCompatActivity() {
         viewModel = ViewModelProvider(this, factory).get(RegisterViewModel::class.java)
         sharedPrefs = getSharedPreferences("auth", Context.MODE_PRIVATE)
         initialBinding()
+        observeRegistrationResult()
+        NetworkUtils.registerNetworkCallback(this, binding.root)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        NetworkUtils.unregisterNetworkCallback()
     }
     //endregion
 
-    //region methods
+    //region Methods
     private fun initialBinding() {
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -45,37 +51,29 @@ class Register : AppCompatActivity() {
             val email = binding.emailEditText.text.toString()
             val password = binding.passwordEditText.text.toString()
 
-            val editor = sharedPrefs.edit()
-            editor.putBoolean("logged_in", true)
-            editor.apply()
-            showSnackbar("Registration successful!")
-            navigateToHomeScreen()
+            viewModel.registerUser(name, studentNumber, email, password)
+        }
+    }
 
-//            Log.e("2323", "before - viewModel")
-//            viewModel.registerUser(name, studentNumber, email, password) { result ->
-//                Log.e("2324", "before -- viewModel")
-//                Log.e("2324", result.toString())
-//                when (result) {
-//                    is ValidationResult.Success -> {
-//                        Log.e("2325", "before --- viewModel")
-//                        val editor = sharedPrefs.edit()
-//                        editor.putBoolean("logged_in", true)
-//                        Log.e("2323", "beroreApply")
-//                        editor.apply()
-//                        showSnackbar("Registration successful!")
-//                        navigateToHomeScreen()
-//                    }
-//                    is ValidationResult.Error -> {
-//                        showSnackbar(result.message)
-//                        Log.e("2325", "Validation Error: ${result.message}")
-//                    }
-//                }
-//            }
+    private fun observeRegistrationResult() {
+        viewModel.registrationResult.observe(this) { result ->
+            when (result) {
+                is ValidationResult.Success -> {
+                    val editor = sharedPrefs.edit()
+                    editor.putBoolean("logged_in", true)
+                    editor.apply()
+                    showSnackbar("Registration successful!")
+                    navigateToHomeScreen()
+                }
+                is ValidationResult.Error -> {
+                    showSnackbar(result.message)
+                }
+            }
         }
     }
 
     private fun navigateToHomeScreen() {
-        startActivity(Intent(this@Register, HomeScreenActivity::class.java))
+        startActivity(Intent(this@Register, MainActivity::class.java))
         finish()
     }
 

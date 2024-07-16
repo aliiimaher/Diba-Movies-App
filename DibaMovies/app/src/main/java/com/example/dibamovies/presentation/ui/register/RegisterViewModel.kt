@@ -12,13 +12,13 @@ import kotlinx.coroutines.launch
 import java.security.MessageDigest
 
 class RegisterViewModel(private val repository: RegisterRepository) : ViewModel() {
-    //region properties
+    //region Properties
     private val userValidator = UserValidator()
-    private val _user = MutableLiveData<UserRegisterResponse>()
-    val user: LiveData<UserRegisterResponse> get() = _user
+    private val _registrationResult = MutableLiveData<ValidationResult<UserRegisterResponse>>()
+    val registrationResult: LiveData<ValidationResult<UserRegisterResponse>> get() = _registrationResult
     //endregion
 
-    //region methods
+    //region Methods
     fun validateUser(
         name: String,
         stdNumber: String,
@@ -51,7 +51,6 @@ class RegisterViewModel(private val repository: RegisterRepository) : ViewModel(
         stdNumber: String,
         email: String,
         password: String,
-        onResult: (ValidationResult<UserRegisterResponse>) -> Unit,
     ) {
         val validationResult = validateUser(name, stdNumber, email, password)
         if (validationResult is ValidationResult.Success) {
@@ -61,20 +60,22 @@ class RegisterViewModel(private val repository: RegisterRepository) : ViewModel(
                 try {
                     val response = repository.registerUser(user)
                     Log.d("RegisterViewModel", "Registration response: $response")
-                    if(response.isSuccess) {
-                        _user.postValue(response.getOrNull())
-                        onResult(ValidationResult.Success(response.getOrNull()!!))
+                    if (response.isSuccess) {
+                        _registrationResult.postValue(ValidationResult.Success(response.getOrThrow()))
                     } else {
-                        onResult(ValidationResult.Error(response.exceptionOrNull()?.message ?: "Unknown Error"))
+                        _registrationResult.postValue(ValidationResult.Error("Registration failed"))
                     }
                 } catch (e: Exception) {
-                    Log.e("RegisterViewModel", "Error during registration", e)
-                    onResult(ValidationResult.Error(e.message ?: "Unknown Error"))
+                    _registrationResult.postValue(
+                        ValidationResult.Error(
+                            e.message ?: "Unknown error"
+                        )
+                    )
                 }
             }
         } else {
             @Suppress("UNCHECKED_CAST")
-            onResult(validationResult as ValidationResult<UserRegisterResponse>)
+            _registrationResult.postValue(validationResult as ValidationResult<UserRegisterResponse>)
         }
     }
     //endregion

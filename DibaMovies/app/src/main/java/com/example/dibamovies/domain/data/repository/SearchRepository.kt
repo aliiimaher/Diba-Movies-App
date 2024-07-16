@@ -1,12 +1,11 @@
 package com.example.dibamovies.domain.data.repository
 
-import com.example.dibamovies.domain.data.model.user.User
-import com.example.dibamovies.domain.data.model.user.UserRegisterResponse
+import com.example.dibamovies.domain.data.model.movie.MoviesResponse
 import com.example.dibamovies.shared_component.api.APIService
 
-class RegisterRepository(private val api: APIService) {
-    suspend fun registerUser(user: User): Result<UserRegisterResponse> {
-        val response = api.registerUser(user)
+class SearchRepository(private val api: APIService) {
+    suspend fun searchMovie(query: String): Result<MoviesResponse> {
+        val response = api.searchMovie(query)
         return if (response.isSuccessful) {
             response.body()?.let {
                 Result.success(it)

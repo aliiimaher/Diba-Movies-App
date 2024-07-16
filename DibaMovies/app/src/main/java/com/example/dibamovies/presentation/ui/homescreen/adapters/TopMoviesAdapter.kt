@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.dibamovies.databinding.ItemSliderMovieBinding
 import com.example.dibamovies.domain.data.model.movie.MoviesResponse
 
@@ -16,6 +17,7 @@ class TopMoviesAdapter(private val topMovies: List<MoviesResponse.Data>) :
             if (item.poster.isNotEmpty()) {
                 Glide.with(binding.imageViewTitle.context)
                     .load(item.poster)
+                    .transition(DrawableTransitionOptions.withCrossFade(1000))
                     .into(binding.imageViewTitle)
             }
         }
