@@ -1,5 +1,6 @@
 package com.example.dibamovies.presentation.ui.homescreen
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -11,13 +12,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dibamovies.databinding.FragmentHomeBinding
 import com.example.dibamovies.domain.data.Constants
+import com.example.dibamovies.presentation.ui.detail.DetailActivity
 import com.example.dibamovies.presentation.ui.homescreen.adapters.GenresAdapter
 import com.example.dibamovies.presentation.ui.homescreen.adapters.LastMoviesAdapter
 import com.example.dibamovies.presentation.ui.homescreen.adapters.TopMoviesAdapter
+import com.example.dibamovies.shared_component.OnMovieClickListener
 import com.example.dibamovies.utils.NetworkUtils
 import com.google.android.material.tabs.TabLayoutMediator
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), OnMovieClickListener {
     //region Properties
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
@@ -58,7 +61,8 @@ class HomeFragment : Fragment() {
     //region Methods
     private fun configViewModel() {
         viewModel.topMovies.observe(viewLifecycleOwner) { topMovies ->
-            val adapter = TopMoviesAdapter(topMovies)
+            val limitedTopMovies = if (topMovies.size > 5) topMovies.subList(0, 5) else topMovies
+            val adapter = TopMoviesAdapter(limitedTopMovies)
             binding.viewPagerSlider.adapter = adapter
 
             TabLayoutMediator(binding.tabLayout, binding.viewPagerSlider) { tab, position ->
@@ -72,12 +76,20 @@ class HomeFragment : Fragment() {
                 LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         }
         viewModel.lastMovies.observe(viewLifecycleOwner) { lastMovies ->
-            val adapter = LastMoviesAdapter(lastMovies)
+            val adapter = LastMoviesAdapter(lastMovies, this)
             binding.moviesRecyclerView.adapter = adapter
             binding.moviesRecyclerView.layoutManager =
                 LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         }
     }
+
+    override fun onMovieClick(movieId: Int) {
+        val intent = Intent(requireContext(), DetailActivity::class.java).apply {
+            putExtra("movie_id", movieId)
+        }
+        startActivity(intent)
+    }
+
 
     private fun setupAutoScroll() {
         autoScrollRunnable = Runnable {

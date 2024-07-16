@@ -7,8 +7,12 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.example.dibamovies.databinding.ItemMovieBinding
 import com.example.dibamovies.domain.data.model.movie.MoviesResponse
+import com.example.dibamovies.shared_component.OnMovieClickListener
 
-class LastMoviesAdapter(private val lastMovies: List<MoviesResponse.Data>) :
+class LastMoviesAdapter(
+    private val lastMovies: List<MoviesResponse.Data>,
+    private val listener: OnMovieClickListener,
+) :
     RecyclerView.Adapter<LastMoviesAdapter.ViewHolder>() {
     inner class ViewHolder(private val binding: ItemMovieBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -19,6 +23,9 @@ class LastMoviesAdapter(private val lastMovies: List<MoviesResponse.Data>) :
                     .load(item.poster)
                     .transition(DrawableTransitionOptions.withCrossFade(1000))
                     .into(binding.moviePic)
+            }
+            binding.root.setOnClickListener {
+                listener.onMovieClick(item.id)
             }
         }
     }
